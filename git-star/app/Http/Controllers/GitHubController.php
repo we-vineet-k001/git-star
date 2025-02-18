@@ -39,10 +39,6 @@ class GitHubController extends Controller
         $clientSecret = env('GITHUB_CLIENT_SECRET');
         $redirectUri = env('GITHUB_REDIRECT_URI');
 
-//        return [ 'client_id' => $clientId,
-//            'client_secret' => $clientSecret,
-//            'code' => $code,
-//            'redirect_uri' => $redirectUri];
 
         // Make the request to GitHub to exchange the code for an access token
         $response = Http::asForm()->post('https://github.com/login/oauth/access_token', [
@@ -62,13 +58,11 @@ class GitHubController extends Controller
 
 
         $accessToken = isset($data['access_token']) ? $data['access_token'] : null;
-        return $accessToken;
-        if (!isset($data['access_token'])) {
+
+        if (!$accessToken) {
             return response()->json(['error' => 'No access token received'], 400);
         }
 
-        // Store the access token for further API requests
-        $accessToken = $data['access_token'];
 
         // You can store the token in the user's session or database
         // For simplicity, we just return the token here
@@ -89,7 +83,7 @@ class GitHubController extends Controller
 
         // Send the request to star the repository
         $response = Http::withToken($accessToken)
-            ->put("https://api.github.com/user/starred/{$repo}");
+            ->put("https://github.com/we-shivam-g001/customer_product_project_using_vaahcms/star");
 
         if ($response->failed()) {
             return response()->json(['error' => 'Failed to star the repository'], 500);
